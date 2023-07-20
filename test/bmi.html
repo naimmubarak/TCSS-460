@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <style>
+        .whole-section1 {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        #bmivalue {
+            margin-bottom: 8px;
+        }
+
+        @media screen and (max-width:450px) {
+            .whole-section1 {
+                padding: 1rem !important;
+            }
+
+            .height-input-custom {
+
+                padding-left: 4px !important;
+                padding-right:4px !important;
+            }
+
+
+        }
+    </style>
+
+    <title>BMI Calculator</title>
+</head>
+
+<body>
+
+    <section class="p-5 whole-section1">
+        <h4 class="mb-4">BMI Calculator</h4>
+
+
+        <!-- calculator field starts here -->
+        <div class="card mb-4  mx-auto">
+            <div class="card-header text-center bg-primary text-white">BMI Calculator</div>
+
+            <div class="card-body">
+
+
+                    <!-- weight field starts here -->
+                    <div class="form-group">
+                        <label for="weight">Weight:</label>
+                        <input type="number" name="bmiWeightPounds" id="weight" class="form-control"
+                            placeholder="Pounds" required>
+                    </div>
+                    <!-- weight field ends here -->
+
+                    <!-- height field starts here -->
+                    <div class="form-group d-flex align-items-baseline height-box">
+                        <label for="height-feet" class="pr-2">Height: </label>
+                        <input type="number" name="bmiHeightFeet" id="height-feet"
+                            class="height-input-custom form-control" placeholder="Feet" required>
+
+                        <label for="height-inches" class="px-2 height-inches-label">Height:</label>
+                        <input type="number" name="bmiHeightInches" id="height-inches"
+                            class="height-input-custom form-control" placeholder="Inches" required>
+                    </div>
+                    <!-- height field ends here -->
+
+                    <!-- age field starts here -->
+                    <div class="form-group">
+                        <label for="age">Age:</label>
+                        <input type="number" name="bmiAgeYears" id="age" class="form-control" placeholder="Years"
+                            required>
+                    </div>
+                    <!-- age field ends here -->
+
+                    <!-- gender field starts here -->
+                    <div class="form-group">
+                        <label for="gender-box">Gender</label>
+
+                        <div class="form-check" id="gender-box">
+                            <input type="radio" id="gender-male" name="bmiGender" required>
+                            <label for="gender-male" class="p-1 mr-3">Male</label>
+                            <input type="radio" id="gender-female" name="bmiGender" required>
+                            <label for="gender-female" class="p-1">Female</label>
+                        </div>
+
+                    </div>
+                    <!-- gender field ends here -->
+
+                    <!-- button to calculate BMI -->
+                    <div>
+                        <button  class="btn btn-primary " onclick="getBmiValue()">Calculate
+                            BMI</button>
+                    </div>
+
+                    <!-- bmi value will be shown here -->
+                    <div class="form-group d-flex align-items-center mt-3">
+                        <label for="bmivalue" class="mr-3">Your BMI is :</label>
+                        <p id="bmivalue"></p>
+                    </div>
+
+            </div>
+        </div>
+        <!-- calculator field ends here -->
+
+        <!-- links to other calculators -->
+        <div class="calcs-list d-flex flex-column">
+
+            <h5>More Calculators:</h5>
+
+            <a href="./bodyfat.html">Body Fat Calculator</a>
+            <a href="./idealweight.html">Ideal Weight Calculator</a>
+            <a href="./caloriesburned.html">Calories Burned Calculator</a>
+
+            <a href="./index.html" class="mt-3 text-body">Go to Home Page. </a>
+        </div>
+    </section>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function getBmiValue() {
+            const weightPounds = parseFloat(document.getElementById('weight').value);
+            const heightFeet = parseFloat(document.getElementById('height-feet').value);
+            const heightInches = parseFloat(document.getElementById('height-inches').value);
+            const ageYears = parseFloat(document.getElementById('age').value);
+            const gender = document.querySelector('input[name="bmiGender"]:checked').value;
+
+            const heightInInches = heightFeet * 12 + heightInches;
+
+            // Display the calculated BMI in the HTML
+            const bmiResultElement = document.querySelector('#bmivalue');
+
+            // Send the BMI data to the Node.js server using AJAX
+            $.ajax({
+                type: 'POST',
+                url: '/calculate-bmi',
+                contentType: 'application/json',
+                data: JSON.stringify({ weight: weightPounds, height: heightInInches, age: ageYears, gender: gender }),
+                success: function (data) {
+                    // Update the displayed BMI value with the calculated response from the server
+                    bmiResultElement.textContent = `${data.bmi.toFixed(2)}`;
+                },
+                error: function (error) {
+                    console.error('Error calculating BMI:', error);
+                    bmiResultElement.textContent = 'An error occurred while calculating BMI.';
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
